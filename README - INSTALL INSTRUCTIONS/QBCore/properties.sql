@@ -2,7 +2,7 @@ DROP table IF EXISTS `properties`;
 
 CREATE TABLE IF NOT EXISTS `properties` (
     `property_id` int(11) NOT NULL AUTO_INCREMENT,
-    `owner_citizenid` varchar(50) NULL,
+    `owner_charid` varchar(50) NULL,
     `street` VARCHAR(100) NULL,
     `region` VARCHAR(100) NULL,
     `description` LONGTEXT NULL,
@@ -17,6 +17,6 @@ CREATE TABLE IF NOT EXISTS `properties` (
     `garage_data` JSON NULL DEFAULT NULL, -- {"x": 0.0, "y": 0.0, "z": 0.0} -- NULL if no garage
     `zone_data` JSON NULL DEFAULT NULL,
     PRIMARY KEY (`property_id`),
-    CONSTRAINT `FK_owner_citizenid` FOREIGN KEY (`owner_citizenid`) REFERENCES `players` (`citizenid`) ON UPDATE CASCADE ON DELETE CASCADE,
-    CONSTRAINT `UQ_owner_apartment` UNIQUE (`owner_citizenid`, `apartment`) -- A character can only own one apartment
+    CONSTRAINT `FK_owner_charid` FOREIGN KEY (`owner_charid`) REFERENCES `players` (`citizenid`) ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT `UQ_owner_apartment` UNIQUE (`owner_charid`, `apartment`) -- A character can only own one apartment
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

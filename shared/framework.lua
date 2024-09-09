@@ -15,6 +15,7 @@ end
 if IsDuplicityVersion() then
     Framework.ox = {}
     Framework.qb = {}
+    Framework.esx = {}
 
     function Framework.ox.Notify(src, message, type)
         type = type == "inform" and "info" or type
@@ -24,6 +25,11 @@ if IsDuplicityVersion() then
     function Framework.qb.Notify(src, message, type)
         type = type == "info" and "primary" or type
         TriggerClientEvent('QBCore:Notify', src, message, type)
+    end
+
+    function Framework.esx.Notify(src, message, type)
+        type = type == "info" and "primary" or type
+        TriggerClientEvent('esx:showNotification', src, message, type)
     end
 
     function Framework.ox.RegisterInventory(stash, label, stashConfig)
@@ -40,8 +46,10 @@ if IsDuplicityVersion() then
         end
     end
     
-    function Framework.ox.SendLog(message)
-            -- noop
+    function Framework.esx.SendLog(message)
+        if Config.EnableLogs then
+            exports['rlo_core']:sendDiscordLog('message')
+        end
     end
 
     return
@@ -405,6 +413,205 @@ Framework.ox = {
                         local onDuty = job.onduty
 
                         return PoliceJobs[jobName] and onDuty and gradeAllowed
+                    end,
+                },
+            },
+        })
+
+        return handler
+    end,
+
+    AddDoorZoneInside = function (coords, size, heading, leave, checkDoor)
+        local handler = exports.ox_target:addBoxZone({
+            coords = vector3(coords.x, coords.y, coords.z), --z = 3.0
+            size = vector3(size.y, size.x, size.z),
+            rotation = heading,
+            debug = Config.DebugMode,
+            options = {
+                {
+                    name = "leave",
+                    label = "Leave Property",
+                    onSelect = leave,
+                    icon = "fas fa-right-from-bracket",
+                },
+                {
+                    name = "doorbell",
+                    label = "Check Door",
+                    onSelect = checkDoor,
+                    icon = "fas fa-bell",
+                },
+            },
+        })
+
+        return handler
+    end,
+
+    AddDoorZoneInsideTempShell = function (coords, size, heading, leave)
+        local handler = exports.ox_target:addBoxZone({
+            coords = vector3(coords.x, coords.y, coords.z), --z = 3.0
+            size = vector3(size.y, size.x, size.z),
+            rotation = heading,
+            debug = Config.DebugMode,
+            options = {
+                {
+                    name = "leave",
+                    label = "Leave",
+                    onSelect = leave,
+                    icon = "fas fa-right-from-bracket",
+                },
+            },
+        })
+        print("made")
+        return handler
+    end,
+
+    RemoveTargetZone = function (handler)
+        exports.ox_target:removeZone(handler)
+    end,
+
+    AddRadialOption = function(id, label, icon, fn)
+        lib.addRadialItem({
+            id = id,
+            icon = icon,
+            label = label,
+            onSelect = fn,
+        })
+    end,
+
+    RemoveRadialOption = function(id)
+        lib.removeRadialItem(id)
+    end,
+
+    AddTargetEntity = function (entity, label, icon, action)
+        exports.ox_target:addLocalEntity(entity, {
+            {
+                name = label,
+                label = label,
+                icon = icon,
+                onSelect = action,
+            },
+        })
+    end,
+    inventoryHasItems = function(name)
+        return lib.callback.await('ps-housing:cb:inventoryHasItems', 10, name, true)
+    end,
+    RemoveTargetEntity = function (entity)
+        exports.ox_target:removeLocalEntity(entity)
+    end,
+
+    OpenInventory = function (stash, stashConfig)
+        exports.ox_inventory:openInventory('stash', stash)
+    end,
+}
+
+Framework.esx = {
+    -- TODO: Replace Target System
+    Notify = function(message, type)
+        type = type == "inform" and "info" or type
+        
+        ESX.ShowNotification(message, type)
+    end,
+
+    AddEntrance = function (coords, size, heading, propertyId, enter, raid, showcase, showData, _)
+        local property_id = propertyId
+
+        local handler = exports.ox_target:addBoxZone({
+            coords = vector3(coords.x, coords.y, coords.z),
+            size = vector3(size.y, size.x, size.z),
+            rotation = heading,
+            debug = Config.DebugMode,
+            options = {
+                {
+                    label = "Enter Property",
+                    icon = "fas fa-door-open",
+                    onSelect = enter,
+                    canInteract = function()
+                        local property = Property.Get(property_id)
+                        return property.has_access or property.owner
+                    end,
+                },
+                {
+                    label = "Showcase Property",
+                    icon = "fas fa-eye",
+                    onSelect = showcase,
+                    canInteract = function()
+                        -- local property = Property.Get(property_id)
+                        -- if property.propertyData.owner ~= nil then return false end -- if its owned, it cannot be showcased
+                        
+                        local job = PlayerData.job
+                        local jobName = job.name
+
+                        return RealtorJobs[jobName]
+                    end,
+                },
+                {
+                    label = "Property Info",
+                    icon = "fas fa-circle-info",
+                    onSelect = showData,
+                    canInteract = function()
+                        local job = PlayerData.job
+                        local jobName = job.name
+                        return RealtorJobs[jobName]
+                    end,
+                },
+                {
+                    label = "Ring Doorbell",
+                    icon = "fas fa-bell",
+                    onSelect = enter,
+                    canInteract = function()
+                        local property = Property.Get(property_id)
+                        return not property.has_access and not property.owner
+                    end,
+                },
+                {
+                    label = "Raid Property",
+                    icon = "fas fa-building-shield",
+                    onSelect = raid,
+                    canInteract = function()
+                        local job = PlayerData.job
+                        local jobName = job.name
+                        local gradeAllowed = tonumber(job.grade.level) >= Config.MinGradeToRaid
+
+                        return PoliceJobs[jobName] and gradeAllowed
+                    end,
+                },
+            },
+        })
+
+        return handler
+    end,
+
+    AddApartmentEntrance = function (coords, size, heading, apartment, enter, seeAll, seeAllToRaid, _)        
+        local handler = exports.ox_target:addBoxZone({
+            coords = vector3(coords.x, coords.y, coords.z),
+            size = vector3(size.y, size.x, size.z),
+            rotation = heading,
+            debug = Config.DebugMode,
+            options = {
+                {
+                    label = "Enter Apartment",
+                    onSelect = enter,
+                    icon = "fas fa-door-open",
+                    canInteract = function()
+                        local apartments = ApartmentsTable[apartment].apartments
+                        return hasApartment(apartments)
+                    end,
+                },
+                {
+                    label = "See all apartments",
+                    onSelect = seeAll,
+                    icon = "fas fa-circle-info",
+                },
+                {
+                    label = "Raid Apartment",
+                    onSelect = seeAllToRaid,
+                    icon = "fas fa-building-shield",
+                    canInteract = function()
+                        local job = PlayerData.job
+                        local jobName = job.name
+                        local gradeAllowed = tonumber(job.grade.level) >= Config.MinGradeToRaid
+
+                        return PoliceJobs[jobName] and gradeAllowed
                     end,
                 },
             },

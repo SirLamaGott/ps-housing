@@ -7,11 +7,11 @@ exports('GetApartments', function() return ApartmentsTable end)
 Config = {}
 
 -- If you're not utilizing ox_lib, it's time to question your approach.
-Config.Target = "qb" -- "ox" or "qb"
-Config.Notify = "qb" -- "ox" or "qb"
-Config.Radial = "qb" -- "ox" or "qb"
+Config.Target = "ox" -- "ox" or "qb"
+Config.Notify = "esx" -- "ox" or "qb" or "esx"
+Config.Radial = "ox" -- "ox" or "qb"
 Config.Inventory = "ox" -- "ox" or "qb"
-Config.Logs = "qb" -- "qb"
+Config.Logs = "esx" -- "qb" or "esx"
 
 -- Anyone provided with keys to a property has the ability to modify its furnishings.
 Config.AccessCanEditFurniture = true
@@ -33,24 +33,24 @@ Config.DynamicDoors = false
 
 Config.PoliceJobNames = {  -- add multiple police jobs that are allowed to raid properties!
     "police",
-    -- "police2",
-    -- "police3",
+    "prison",
+    "richter",
+    "admin",
 }
 
-Config.MinGradeToRaid = 3  -- Minimum grade to raid a property
+Config.MinGradeToRaid = 6  -- Minimum grade to raid a property
 
 Config.RaidTimer = 5  -- 5 minutes
 
-Config.RaidItem = "police_stormram"  -- The item required to raid a property
+Config.RaidItem = "drill"  -- The item required to raid a property
 
 -- If you are using ox_inventory, it is encouraged to use the consume property within data/items.lua and keeping this config option false
 Config.ConsumeRaidItem = false          -- Whether or not to consume the raid item upon successful entry.
 
 -- Set your Real Estate jobs here
 Config.RealtorJobNames = { -- add multiple realestate jobs that are allowed to sell properties!
-    "realestate",
-    -- "realestate2",
-    -- "realestate3",
+    "makler",
+    "admin",
 }
 
 -- If you are utilizing qb-banking and wish for the funds to be deposited directly into the Realestate bank account, set this value to true. 
@@ -627,7 +627,8 @@ Config.FurnitureTypes = {
         Framework[Config.Target].AddTargetEntity(entity, "Clothing", "fas fa-shirt", function()
             local heading = GetEntityHeading(cache.ped)
             SetEntityHeading(cache.ped, heading - 180.0)
-            TriggerEvent("qb-clothing:client:openOutfitMenu")
+            -- TODO: add esx clothing menu
+            --TriggerEvent("qb-clothing:client:openOutfitMenu")
         end)
 
         local property = Property.Get(property_id)
