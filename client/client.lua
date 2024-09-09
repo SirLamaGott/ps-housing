@@ -1,5 +1,3 @@
-QBCore = exports['qb-core']:GetCoreObject()
-PlayerData = {}
 local loaded = false
 
 local function createProperty(property)
@@ -20,7 +18,6 @@ end)
 function InitialiseProperties(properties)
     if loaded then return end
     Debug("Initialising properties")
-    PlayerData = QBCore.Functions.GetPlayerData()
 
     for k, v in pairs(Config.Apartments) do
         ApartmentsTable[k] = Apartment:new(v)
@@ -39,14 +36,17 @@ function InitialiseProperties(properties)
     Debug("Initialised properties")
     loaded = true
 end
-AddEventHandler("QBCore:Client:OnPlayerLoaded", InitialiseProperties)
+
+AddEventHandler('esx:playerLoaded', InitialiseProperties)
 RegisterNetEvent('ps-housing:client:initialiseProperties', InitialiseProperties)
 
--- AddEventHandler("onResourceStart", function(resourceName) -- Used for when the resource is restarted while in game
--- 	if (GetCurrentResourceName() == resourceName) then
---         InitialiseProperties()
--- 	end
--- end)
+if Config.DebugMode then 
+    AddEventHandler("onResourceStart", function(resourceName) -- Used for when the resource is restarted while in game
+        if (GetCurrentResourceName() == resourceName) then
+            InitialiseProperties()
+        end
+    end)
+end
 
 if GetResourceState('qbx_properties') == 'started' then
     local data = {}
@@ -61,10 +61,14 @@ if GetResourceState('qbx_properties') == 'started' then
     TriggerEvent('ps-housing:setApartments', data)
 end
 
+-- TODO: i think we dont need this
+--[[
 RegisterNetEvent('QBCore:Client:OnJobUpdate', function(job)
     PlayerData.job = job
 end)
+--]]
 
+-- TODO: need to test ingame what this is
 RegisterNetEvent('ps-housing:client:setupSpawnUI', function(cData)
     DoScreenFadeOut(1000)
     local result = lib.callback.await('ps-housing:cb:GetOwnedApartment', source, cData.citizenid)

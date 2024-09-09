@@ -29,7 +29,7 @@ end
 Config.EnableLogs = true
 
 -- Enables Dynamic Doors
-Config.DynamicDoors = false
+Config.DynamicDoors = true
 
 Config.PoliceJobNames = {  -- add multiple police jobs that are allowed to raid properties!
     "police",

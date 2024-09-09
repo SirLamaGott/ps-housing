@@ -34,10 +34,10 @@ function Property:new(propertyData)
     -- Remove furnitures from property data for memory purposes
     propertyData.furnitures = {}
     self.propertyData = propertyData
-    local citizenid = PlayerData.citizenid
+    local charid = ESX.PlayerData.identifier
 
-    self.owner = propertyData.owner == citizenid
-    self.has_access = lib.table.contains(self.propertyData.has_access, citizenid)
+    self.owner = propertyData.owner == charid
+    self.has_access = lib.table.contains(self.propertyData.has_access, charid)
 
     if propertyData.apartment then
         local aptName = propertyData.apartment
@@ -271,6 +271,8 @@ function Property:RegisterGarageZone()
     if isQbx then
         TriggerServerEvent('ps-housing:server:qbxRegisterHouse', self.property_id)
     else
+        -- TODO: add rlo garage integration
+        --[[
         TriggerEvent("qb-garages:client:addHouseGarage", self.property_id, {
             takeVehicle = {
                 x = garageData.x,
@@ -281,6 +283,7 @@ function Property:RegisterGarageZone()
             type = "house",
             label = label,
         })
+        --]]
     end
     if not isQbx then
         self.garageZone = lib.zones.box({
@@ -289,7 +292,8 @@ function Property:RegisterGarageZone()
             rotation = coords.w,
             debug = Config.DebugMode,
             onEnter = function()
-                TriggerEvent('qb-garages:client:setHouseGarage', self.property_id, true)
+                -- TODO: add rlo garage integration
+                --TriggerEvent('qb-garages:client:setHouseGarage', self.property_id, true)
             end,
         })
     end
@@ -298,7 +302,8 @@ end
 function Property:UnregisterGarageZone()
     if not self.garageZone then return end
 
-    TriggerEvent("qb-garages:client:removeHouseGarage", self.property_id)
+    -- TODO: add rlo garage integration
+    --TriggerEvent("qb-garages:client:removeHouseGarage", self.property_id)
 
     self.garageZone:remove()
     self.garageZone = nil
@@ -313,7 +318,8 @@ function Property:EnterShell()
 
     if not isMlo or isIpl then
         DoScreenFadeOut(250)
-        TriggerServerEvent("InteractSound_SV:PlayOnSource", "houses_door_open", 0.25)
+        -- TODO: switch to rlo sound integration
+        --TriggerServerEvent("InteractSound_SV:PlayOnSource", "houses_door_open", 0.25)
         Wait(250)
         
         if isIpl and isIpl.zone then
@@ -349,7 +355,8 @@ function Property:LeaveShell()
 
     if not isMlo or isIpl then
         DoScreenFadeOut(250)
-        TriggerServerEvent("InteractSound_SV:PlayOnSource", "houses_door_open", 0.25)
+        -- TODO: switch to rlo sound integration
+        --TriggerServerEvent("InteractSound_SV:PlayOnSource", "houses_door_open", 0.25)
         Wait(250)
 
         local coords = self:GetDoorCoords()
@@ -868,9 +875,9 @@ function Property:UpdateDoor(newDoor, newStreet, newRegion)
 end
 
 function Property:UpdateHas_access(newHas_access)
-    local citizenid = PlayerData.citizenid
+    local charid = ESX.PlayerData.identifier
     self.propertyData.has_access = newHas_access
-    self.has_access = lib.table.contains(newHas_access, citizenid)
+    self.has_access = lib.table.contains(newHas_access, charid)
 
     if not self.inProperty then return end
 
