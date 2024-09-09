@@ -2,7 +2,7 @@
 	function portal(node, { to }) {
 		const target = document.querySelector(to)
 		target && target.appendChild(node)
-		return {}
+		return {} 
 	}
 </script>
 

@@ -8,7 +8,7 @@
 		class="w-[40rem] h-[60rem] bg-[color:var(--color-primary)] absolute right-0 -top-[65rem] flex flex-col gap-[1rem] p-12"
 	>
 		<div class="font-medium">
-			<p>YOUR SHOPPING CART</p>
+			<p>EINKAUFSWAGEN</p>
 		</div>
 		<div
 			class="flex flex-col gap-2 overflow-scroll h-[73%] scroll-style scroll-style-vertical"
@@ -31,7 +31,7 @@
 					<div class="flex flex-col gap-2 w-full text-start ml-10">
 						<h1 class="text-[2rem]">{item.label}</h1>
 						<div class="flex text-[1.5rem]">
-							<h1>Price:</h1>
+							<h1>Preis:</h1>
 							<h1 class="text-[color:var(--color-accent)] font-bold ml-2">${item.price}</h1>
 						</div>
 
@@ -50,7 +50,7 @@
 		<div class="flex flex-col gap-2 items-center justify-center h-[5rem] mt-10">
 			<div class="text-[1.6rem] w-full h-full flex items-center justify-between">
 				<h1>
-					SUBTOTAL:
+					GESAMT:
 				</h1>
 				<h1>
 					${$CART.reduce((acc, item) => acc + item.price, 0)}
@@ -70,7 +70,7 @@
 						SendNUI('buyCartItems')
 					}}
 				>
-					<p>Purchase</p>
+					<p>KAUFEN</p>
 				</button>
 			</div>
 		</div>

@@ -13,7 +13,7 @@
 	import Modeler from '@components/Modeler.svelte'
 	import ModelStore from '@store/ModelStore'
 
-	$resName = 'ps-housing' // Change this to your resource name (case sensitive)
+	$resName = 'rlo_housing' // Change this to your resource name (case sensitive)
 
 	const { show } = ModelStore
 

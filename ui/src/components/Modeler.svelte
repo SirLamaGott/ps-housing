@@ -198,10 +198,10 @@
 								)
 								getMeshLocation()
 							})
-						}}>Place On Ground</button
+						}}>Auf Boden Platzieren</button
 					>
 				<div class="flex flex-col items-center ">
-					<p class=" h-fit">Rotation Snap</p>
+					<p class=" h-fit">Drehungs Snap</p>
 					<div class="flex flex-row gap-[1rem] text-center">
 						<div class="bg-[color:var(--color-secondary)] relative flex flex-col w-[8rem] px-[0.1rem]"><p>x</p> <p>{MathUtils.radToDeg($objectEuler.x).toFixed(2)}</p></div>
 						<div class="bg-[color:var(--color-secondary)] relative flex flex-col w-[8rem] px-[0.1rem]"><p>y</p> <p>{MathUtils.radToDeg($objectEuler.y).toFixed(2)}</p></div>
@@ -224,7 +224,7 @@
 						class="w-full"
 					/>
 				</div>
-				<p class="">Object Alpha</p>
+				<p class="">Objekt Transparenz</p>
 				<div class="flex flex-row gap-[1rem] items-center">
 					<input
 						id="slider"
@@ -242,7 +242,7 @@
 						SendNUI('stopPlacement')
 						ModelStore.show.set(false)
 						$CURRENTFURNITURE = null
-					}}>Stop Placement</button
+					}}>Platzieren Abbrechen</button
 				>
 			</div>
 			<button
@@ -272,7 +272,7 @@
 					if (itemsWithSameType.length >= furnitureTypeMax) {
 						SendNUI('showNotification', {
 							type: 'error',
-							message: `You can only have ${furnitureTypeMax} of this item!`,
+							message: `Du kannst nur ${furnitureTypeMax} von diesem Objekt haben!`,
 						})
 						return;
 					}
@@ -283,7 +283,7 @@
 			}}
 		>        
 			<i class="fa-solid fa-shopping-cart text-[white]"></i>
-        	<p class=" font-semibold">Add To Cart</p>
+        	<p class=" font-semibold">In den Warenkorb</p>
 		</button>	
 		{/if}
 
